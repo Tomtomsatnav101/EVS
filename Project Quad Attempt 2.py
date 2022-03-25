@@ -170,6 +170,10 @@ def plot_n():
     N3 = N[3][:]
     N4 = N[4][:]
     
+    
+    zz=np.linspace(0,1.1,12)
+    zz= zz+0.05
+    
     plt.figure(0)
     plt.semilogy(zz[0:11], N0, '+' , label="M="+str(M[0]))
     plt.semilogy(zz[0:11], N1, '+' ,label="M="+str(M[1]))
@@ -180,7 +184,7 @@ def plot_n():
     plt.ylabel("n(>M, z)")
     plt.title('Number of Clusters larger than M for given redshift')
     plt.legend(loc="lower left",fontsize = 'small')
-    plt.xlim([-0.05, 1.05])
+    plt.xlim([0, 1.1])
 
 def P0_dU(z,U):
     dndu = dn_dU(U,z)
