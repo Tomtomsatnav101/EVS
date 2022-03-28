@@ -413,17 +413,17 @@ alpha1 = np.zeros(12)
 beta1 = np.zeros(12)
 
 for i in range(12):
-    temp = EVS_para(u0ps[i], z_mean[i]-0.05)    
+    temp = EVS_para(u0st[i], z_mean[i]-0.05)    
     gamma1[i] = temp[0]
     alpha1[i] = temp[1]
     beta1[i] = temp[2]
 
 plt.figure(2)
-plt.plot(u0ps-alpha1)
+plt.plot(u0st-alpha1)
 plt.title("Difference between m0 and alpha")
 
 #%%
-x = np.linspace(14.988,14.99,21)
+x = np.linspace(1,16,21)
 y=np.zeros(21)
 f1 = np.zeros(21)
 #F1 = np.zeros(21)
@@ -518,6 +518,9 @@ cs_ups = CubicSpline(z_mean, Umaxps)
 
 plt.plot(xs, cs_ust(xs) ,label="Sheth-Torman")
 plt.plot(xs, cs_ups(xs) ,label="Press-Schechter")
+plt.scatter(z_mean, Umaxst, marker="+")
+plt.scatter(z_mean, Umaxps, marker="+")
+
 plt.ylim(10**15,10**15.5)
 plt.xlabel("Redshift Bin")
 plt.ylabel("M_max (10^15 Solar Masses)")
@@ -531,14 +534,14 @@ for i in range(z_bin+1):
     F_low[i] = inv_Weibull(0.05,gamma1[i], alpha1[i], beta1[i])
     F_high[i] = inv_Weibull(0.999,gamma1[i], alpha1[i], beta1[i])
 
-cs_Fhigh_ps = CubicSpline(z_mean, F_high)
-cs_Flow_ps = CubicSpline(z_mean, F_low)
+cs_Fhigh_st = CubicSpline(z_mean, F_high)
+cs_Flow_st = CubicSpline(z_mean, F_low)
 xs = np.arange(0.05, 1.15, 0.01)
 
 plt.figure(600)
-plt.plot(xs,cs_Flow_ps(xs), label="Lower bound")
-plt.plot(xs,cs_Fhigh_ps(xs), label="Upper bound")
-plt.plot(xs, cs_mps(xs), label="Press-Schechter")
+plt.plot(xs,cs_Flow_st(xs), label="Lower bound")
+plt.plot(xs,cs_Fhigh_st(xs), label="Upper bound")
+plt.plot(xs, cs_mst(xs), label="Press-Schechter")
 plt.title('Press-Schechter')
 plt.xlabel("Redshift Bin")
 plt.ylabel("M_max")
@@ -568,44 +571,66 @@ plt.errorbar(z_mean[0:5], log_data, yerr=log_error, marker="*", linestyle="none"
 #%%
 #Planck data
 
+z_mean = [0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95, 1.05, 1.15]
+
 lin_F_low = np.zeros(z_bin+1)
 lin_F_high = np.zeros(z_bin+1)
 for i in range(z_bin+1):
     lin_F_low[i] = 10**F_low[i]/(10**15)
     lin_F_high[i] = 10**F_high[i]/(10**15)
 
-lin_cs_Fhigh_ps = CubicSpline(z_mean, lin_F_high)
-lin_cs_Flow_ps = CubicSpline(z_mean, lin_F_low)
+lin_cs_Fhigh_st = CubicSpline(z_mean, lin_F_high)
+lin_cs_Flow_st = CubicSpline(z_mean, lin_F_low)
 
-Umaxps = np.zeros(12)
+Umaxst = np.zeros(12)
 for i in range(12):
-    Umaxps[i] = 10**Mmaxps[i]/(10**15)
+    Umaxst[i] = 10**Mmaxst[i]/(10**15)
     
 
-lin_cs_mps = CubicSpline(z_mean, Umaxps)
+lin_cs_mst = CubicSpline(z_mean, Umaxst)
 xs = np.arange(0.05, 1.15, 0.01)
 
 plt.figure(602)
 
+#Uncomment for Planck
 data_2 = [0.8771, 0.8859, 1.6116, 1.4693 ,1.2250, 1.1487, 1.0727, 0.9481, 1.0754, 0.6774]
-u_error = [0.0186, 0.0323, 0.0297, 0.0392, 0.0525, 0.0535, 0.0630, 0.0669, 0.0478, 0.0487]
-l_error =[0.0209, 0.0320, 0.0292, 0.0417, 0.0550, 0.0548, 0.0664, 0.0530, 0.0472, 0.0535]
-error_2 = np.zeros([2,10])
-for i in range(10):
-    error_2[0,i] = l_error[i]
-    error_2[1,i] = u_error[i]
+u_error_2 = [0.0186, 0.0323, 0.0297, 0.0392, 0.0525, 0.0535, 0.0630, 0.0669, 0.0478, 0.0487]
+l_error_2 =[0.0209, 0.0320, 0.0292, 0.0417, 0.0550, 0.0548, 0.0664, 0.0530, 0.0472, 0.0535]
 
-plt.plot(xs,lin_cs_Flow_ps(xs), label="Lower bound")
-plt.plot(xs,lin_cs_Fhigh_ps(xs), label="Upper bound")
-plt.plot(xs, lin_cs_mps(xs), label="Press-Schechter")
-plt.scatter(z_mean, Umaxps, marker="x")
+error_2 = np.zeros([2,len(data_2)])
+for i in range(len(data_2)):
+    error_2[0,i] = l_error_2[i]
+    error_2[1,i] = u_error_2[i]
+
+#That other paper
+data_3 = [3.04, 2.62, 2.14, 1.85, 1.45, 1.11, 0.780]
+u_error_3 = [0.87, 0.87, 0.60, 0.42, 0.27, 0.24, 0.1278]
+l_error_3 = [0.67, 0.67, 0.48, 0.33, 0.20, 0.20, 0.093]
+z_mean_err = [0.203, 0.375, 0.451, 0.87, 0.94, 1.132, 1.067]
+
+error_3 = np.zeros([2,len(data_3)])
+for i in range(len(data_3)):
+    error_3[0,i] = l_error_3[i]
+    error_3[1,i] = u_error_3[i]
+
+plt.plot(xs,lin_cs_Flow_st(xs), label="Lower bound")
+plt.plot(xs,lin_cs_Fhigh_st(xs), label="Upper bound")
+plt.plot(xs, lin_cs_mst(xs), label="Sheth-Tormen")
+plt.scatter(z_mean, Umaxst, marker="x")
 plt.scatter(z_mean, lin_F_high, marker="x")
 plt.scatter(z_mean, lin_F_low, marker="x")
 
-plt.errorbar(z_mean[0:10], data_2, yerr=error_2, marker="_", linestyle="none", capsize=6)
+plt.errorbar(z_mean[0:len(data_2)], data_2, yerr=error_2, marker="*", linestyle="none", capsize=6, label="Planck")
 plt.xlabel("Redshift bin")
 plt.ylabel("Mass (10^15 solar masses)")
-plt.title("Press-Schechter")
+
+
+plt.errorbar(z_mean_err[0:len(data_3)], data_3, yerr=error_3, marker="*", linestyle="none", capsize=6, label="Harisson")
+plt.xlabel("Redshift bin")
+plt.ylabel("Mass (10^15 solar masses)")
+
+
+plt.title("Most Massive Clusters (Sheth-Tormen)")
 plt.legend(loc="upper right")
 
 #Zoom on error bars
