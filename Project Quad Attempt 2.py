@@ -197,7 +197,10 @@ def P0_dU(z,U):
     return -np.exp(-n)*dndu
 
 def m_0(z):
-    U = np.linspace(15.069,15.071,21) #15.324, 15.326
+    
+#%%
+    z=0
+    U = np.linspace(15.337,15.347,21) #15.324, 15.326
     M = np.zeros(21)
     z_mean=z+0.05
     V = integrate.quad(dV_dz,z,z+0.1)[0]
@@ -205,11 +208,11 @@ def m_0(z):
         M[i] = -np.log(V) + np.log(dn_dU(U[i], z_mean)) - mean_num_den(U[i], np.inf, z_mean)*V
 
     plt.figure(1)
-    plt.plot(U[0:21], M,'+')
+    plt.plot(U[0:21], M,'-+', linewidth=1)
     plt.title("p_G(m)")
     plt.xlabel("log_10(M/Solar Masses)")
     plt.ylabel("log(dP/dm)")
-    
+#%% 
 def dP_0_dm():
     #%%
     #Use this function to manually search for m_0
@@ -456,7 +459,7 @@ plt.title("p_G(m)")
 plt.xlabel("log_10(M/Solar Masses)")
 plt.ylabel("log(dP/dm)")
 
-
+#%%
 u0 = 15.55
 V = integrate.quad(dV_dz,0,1)[0]
 z_mean = 0.5
